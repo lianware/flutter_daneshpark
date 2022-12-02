@@ -116,7 +116,7 @@ class _HomeState extends State<Home> {
                 color: Colors.teal,
                 iconSize: 80,
               ),
-              Text("کتاب هوشمند",
+              Text("کتابخانه",
                   style: TextStyle(
                       fontFamily: "Irs",
                       fontSize: 18,

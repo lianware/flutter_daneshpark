@@ -26,7 +26,7 @@ class SendRequest {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       Response response = await post(
-        Uri.parse('http://daneshpark.ir/user/authenticate'),
+        Uri.parse('http://daneshpark.ir:1090/user/authenticate'),
         body: jsonEncode(body), 
         headers: {'Content-Type':'application/json'}
       );
@@ -73,7 +73,7 @@ class SendRequest {
     };
     try {
       Response signUpResponse = await post(
-          Uri.parse('http://daneshpark.ir/user/new'),
+          Uri.parse('http://daneshpark.ir:1090/user/new'),
           body: jsonEncode(signUpBody),
           headers: {'Content-Type':'application/json'}
           );

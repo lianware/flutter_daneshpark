@@ -32,25 +32,8 @@ class _BankState extends State<Bank> {
 
   @override
   void initState() {
-    initUniLinks().then((value) => this.setState(() {
-          Uri uri = Uri.parse(value!);
-          Map<String, String> queryParams = uri.queryParameters;
-          callBack = queryParams.values.last;
-        }));
-    showCallBackMessage();
     fetchPayment();
     super.initState();
-  }
-
-  Future<String?> initUniLinks() async {
-    try {
-      final initialLink = await getInitialLink();
-
-      return initialLink;
-    } on PlatformException {
-      // error
-
-    }
   }
 
   @override
@@ -278,67 +261,53 @@ class _BankState extends State<Bank> {
     }
   }
 
-  void showCallBackMessage() {
-    if (callBack == "OK") {
-      Timer(Duration(seconds: 5), () {
-        Generate.showMySnackBar(
-            context, "خرید با موفقیت از درگاه انجام شد", _messengerKey);
-      });
-    } else if (callBack == "NOK") {
-      Timer(Duration(seconds: 5), () {
-        Generate.showMySnackBar(
-            context, "خطایی در ارتباط با درگاه رخ داده است", _messengerKey);
-      });
-    }
-  }
-
   Future<void> fetchPayment() async {
     _Orderlogs.clear();
     _Buylogs.clear();
     try {
       SharedPreferences logindata = await SharedPreferences.getInstance();
-      Response response1 = await get(Uri.parse(
-          "http://daneshpark.ir:1585/public/api/get/user/charge/" +
-              logindata.getString("id").toString() +
-              "?token=" +
-              logindata.getString("token").toString()));
+      // Response response1 = await get(Uri.parse(
+      //     "http://daneshpark.ir:1585/public/api/get/user/charge/" +
+      //         logindata.getString("id").toString() +
+      //         "?token=" +
+      //         logindata.getString("token").toString()));
 
-      Response response2 = await get(Uri.parse(
-          "http://daneshpark.ir/get/transactions/user?id=" +
-              logindata.getString("id").toString()));
-      var logJson1 = json.decode(utf8.decode(response1.bodyBytes));
-      var logJson2 = json.decode(utf8.decode(response2.bodyBytes));
-      for (var tmp1 in logJson1["amount"]["data"]) {
-        var myItem1 = OrderLogs(
-            tmp1['order_date'],
-            tmp1['amount'].toString(),
-            tmp1['state'].toString(),
-            tmp1['authority'],
-            tmp1['ref_id'],
-            tmp1['is_ok'].toString());
-        setState(() {
-          _Orderlogs.add(myItem1);
-        });
-      }
-      for (var tmp2 in logJson2["order"]) {
-        var myItem2 = BuyLogs(
-            tmp2['_id'].toString(),
-            tmp2['date'].toString(),
-            tmp2['state'].toString(),
-            tmp2['price'].toString(),
-            tmp2['item_id'].toString(),
-            tmp2['user_id'].toString(),
-            tmp2['name']);
-        setState(() {
-          _Buylogs.add(myItem2);
-        });
-      }
+      // Response response2 = await get(Uri.parse(
+      //     "http://daneshpark.ir:1090/get/transactions/user?id=" +
+      //         logindata.getString("id").toString()));
+      // var logJson1 = json.decode(utf8.decode(response1.bodyBytes));
+      // var logJson2 = json.decode(utf8.decode(response2.bodyBytes));
+      // for (var tmp1 in logJson1["amount"]["data"]) {
+      //   var myItem1 = OrderLogs(
+      //       tmp1['order_date'],
+      //       tmp1['amount'].toString(),
+      //       tmp1['state'].toString(),
+      //       tmp1['authority'],
+      //       tmp1['ref_id'],
+      //       tmp1['is_ok'].toString());
+      //   setState(() {
+      //     _Orderlogs.add(myItem1);
+      //   });
+      // }
+      // for (var tmp2 in logJson2["resutls"]) {
+      //   var myItem2 = BuyLogs(
+      //       tmp2['_id'].toString(),
+      //       tmp2['date'].toString(),
+      //       tmp2['state'].toString(),
+      //       tmp2['price'].toString(),
+      //       tmp2['item_id'].toString(),
+      //       tmp2['user_id'].toString(),
+      //       tmp2['name']);
+      //   setState(() {
+      //     _Buylogs.add(myItem2);
+      //   });
+      // }
       setState(() {
-        userAmount = logJson1['user_amount'].toString();
+        userAmount = logindata.getString('amount').toString();
       });
     } catch (e) {
       Generate.showMySnackBar(
-          context, "اتصال شما با اینترنت قطع می باشد", _messengerKey);
+          context, "اتصال شما با سرور قطع می باشد", _messengerKey);
     }
   }
 }
