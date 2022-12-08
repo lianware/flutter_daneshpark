@@ -227,7 +227,7 @@ class Generate {
             ),
             Container(
               child: Text(
-                log.ref_id,
+                "کد رهگیری " + log.ref_id,
                 textAlign: TextAlign.right,
                 style: TextStyle(
                     color: Colors.black, fontFamily: 'Irs', fontSize: 18),
@@ -241,8 +241,8 @@ class Generate {
             ),
             Container(
               child: Text(
-                (((log.state == "0") ? " افزایش" : " کسر") + " اعتبار"),
-                style: TextStyle(fontFamily: 'Irs'),
+                ((log.state == "OK") ? "پرداخت موفق" : " پرداخت ناموفق"),
+                style: TextStyle(fontFamily: 'Irs', fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -301,9 +301,9 @@ class Generate {
             ),
             Container(
               child: Text(
-                (log.state == -1)
+                (log.state == "-1")
                     ? "خرید محصول از فروشگاه کتاب هوشمند"
-                        : (log.state == 1)
+                        : (log.state == "1")
                             ? "خرید تور آموزشی"
                                 : "خرید محصول از دکه",
                 style: TextStyle(

@@ -165,7 +165,7 @@ class _BankState extends State<Bank> {
                         ),
                         TextButton(
                           onPressed: () {
-                            _launchUrl((_sliderDiscreteValue.floor() * 10000)
+                            _launchUrl((_sliderDiscreteValue.floor() * 1000)
                                 .toString());
                           },
                           child: Text('پرداخت'),
@@ -251,11 +251,13 @@ class _BankState extends State<Bank> {
 
   Future<void> _launchUrl(String amount) async {
     SharedPreferences logindata = await SharedPreferences.getInstance();
-    if (!await launchUrl(
-        Uri.parse("http://daneshpark.ir/add/money/" +
+    Response response_url = await get(Uri.parse("http://daneshpark.ir:1090/payment/add?amount=" +
             amount +
-            "?token=" +
-            logindata.getString("token").toString()),
+            "&description=شارژ حساب کاربری" + 
+            "&token=" +
+            logindata.getString("token").toString()));
+    var url = json.decode(utf8.decode(response_url.bodyBytes));
+    if (!await launchUrl(Uri.parse(url["CallbackURL"]),
         mode: LaunchMode.externalApplication)) {
       throw 'Could not launch';
     }
@@ -266,42 +268,42 @@ class _BankState extends State<Bank> {
     _Buylogs.clear();
     try {
       SharedPreferences logindata = await SharedPreferences.getInstance();
-      // Response response1 = await get(Uri.parse(
-      //     "http://daneshpark.ir:1585/public/api/get/user/charge/" +
-      //         logindata.getString("id").toString() +
-      //         "?token=" +
-      //         logindata.getString("token").toString()));
+      Response response1 = await get(Uri.parse(
+          "http://daneshpark.ir:1090/get/charge?id=" +
+              logindata.getString("id").toString()));
 
-      // Response response2 = await get(Uri.parse(
-      //     "http://daneshpark.ir:1090/get/transactions/user?id=" +
-      //         logindata.getString("id").toString()));
-      // var logJson1 = json.decode(utf8.decode(response1.bodyBytes));
-      // var logJson2 = json.decode(utf8.decode(response2.bodyBytes));
-      // for (var tmp1 in logJson1["amount"]["data"]) {
-      //   var myItem1 = OrderLogs(
-      //       tmp1['order_date'],
-      //       tmp1['amount'].toString(),
-      //       tmp1['state'].toString(),
-      //       tmp1['authority'],
-      //       tmp1['ref_id'],
-      //       tmp1['is_ok'].toString());
-      //   setState(() {
-      //     _Orderlogs.add(myItem1);
-      //   });
-      // }
-      // for (var tmp2 in logJson2["resutls"]) {
-      //   var myItem2 = BuyLogs(
-      //       tmp2['_id'].toString(),
-      //       tmp2['date'].toString(),
-      //       tmp2['state'].toString(),
-      //       tmp2['price'].toString(),
-      //       tmp2['item_id'].toString(),
-      //       tmp2['user_id'].toString(),
-      //       tmp2['name']);
-      //   setState(() {
-      //     _Buylogs.add(myItem2);
-      //   });
-      // }
+      Response response2 = await get(Uri.parse(
+          "http://daneshpark.ir:1090/get/transactions/user?id=" +
+              logindata.getString("id").toString()));
+
+      var logJson1 = json.decode(utf8.decode(response1.bodyBytes));
+      var logJson2 = json.decode(utf8.decode(response2.bodyBytes));
+      
+      for (var tmp1 in logJson1["results"]) {
+        var myItem1 = OrderLogs(
+            tmp1['date'],
+            tmp1['amount'].toString(),
+            tmp1['status'].toString(),
+            tmp1['authority'],
+            tmp1['ref_id'],
+            tmp1['description'].toString());
+        setState(() {
+          _Orderlogs.add(myItem1);
+        });
+      }
+      for (var tmp2 in logJson2["results"]) {
+        var myItem2 = BuyLogs(
+            tmp2['_id'].toString(),
+            tmp2['date'].toString(),
+            tmp2['state'].toString(),
+            tmp2['price'].toString(),
+            tmp2['item_id'].toString(),
+            tmp2['user_id'].toString(),
+            tmp2['name']);
+        setState(() {
+          _Buylogs.add(myItem2);
+        });
+      }
       setState(() {
         userAmount = logindata.getString('amount').toString();
       });

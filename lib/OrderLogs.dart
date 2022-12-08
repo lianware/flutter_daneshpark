@@ -4,10 +4,10 @@ class OrderLogs {
   String _state;
   String _authority;
   String _ref_id;
-  String _is_ok;
+  String _description;
 
   OrderLogs(this._order_date, this._amount, this._state, this._authority,
-      this._ref_id, this._is_ok);
+      this._ref_id, this._description);
 
   get order_date => this._order_date;
 
@@ -29,7 +29,7 @@ class OrderLogs {
 
   set ref_id(value) => this._ref_id = value;
 
-  get is_ok => this._is_ok;
+  get description => this._description;
 
-  set is_ok(value) => this._is_ok = value;
+  set description(value) => this._description = value;
 }
